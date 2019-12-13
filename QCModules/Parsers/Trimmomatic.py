@@ -25,13 +25,21 @@ class Trimmomatic(BaseParser):
                     if is_paired:
                         # paired-end output
                         input_reads = int(line.strip().split()[3]) * 2
-                        trimmed_reads = int(line.strip().split()[6]) * 2
+                        #trimmed_reads = int(line.strip().split()[6]) * 2
+                        r1_trimmed_unpaired = int(line.strip().split()[11])
+                        r2_trimmed_unpaired = int(line.strip().split()[16])
+                        trimmed_paired = int(line.strip().split()[6]) * 2
+                        trimmed_reads = trimmed_paired + r1_trimmed_unpaired + r2_trimmed_unpaired
                     else:
                         # single-end output
                         input_reads = int(line.strip().split()[2])
                         trimmed_reads = int(line.strip().split()[4])
                     self.add_entry("Input_Reads", input_reads)
                     self.add_entry("Trimmed_Reads", trimmed_reads)
+                    if is_paired:
+                        self.add_entry("Trimmed_Paired", trimmed_paired)
+                        self.add_entry("Trimmed_F_only", r1_trimmed_unpaired)
+                        self.add_entry("Trimmed_R_only", r2_trimmed_unpaired)
                     break
 
             # Raise exception if header line never seen
